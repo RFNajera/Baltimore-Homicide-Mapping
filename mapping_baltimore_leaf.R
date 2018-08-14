@@ -16,9 +16,11 @@ violence_2018 <- read.csv("data/2018_homicides_shootings_jan_july.csv", stringsA
 color_factor <- colorFactor(c("red", "blue"), domain=c("HOMICIDE", "SHOOTING")) # Note the alphabetical order of the values.
 
 # Create the map
-baltimore_map1 <- leaflet() %>%
-  addTiles() %>% # Note that it adds Open Street Map tiles. These are customizable.
-  setView(-76.6425073,39.2928739, zoom = 12) %>% #Centers on Baltimore
+library(leaflet)
+baltimore_map_simple <- leaflet() %>%
+  #addTiles() %>% # Note that it adds Open Street Map tiles. These are customizable.
+  addProviderTiles(providers$Stamen.Toner) %>%
+  setView(-76.6425073,39.2928739, zoom = 12, map = ) %>% #Centers on Baltimore
   addCircles(violence_2018$Longitude, # x coordinate
              violence_2018$Latitude, # y coordinate
              popup=violence_2018$Description, # What pops up when clicking on a circle? This can be from the data or a line of text.
@@ -31,11 +33,11 @@ baltimore_map1 <- leaflet() %>%
 
 # Look at the map. Simple, right?
 
-baltimore_map1
+baltimore_map_simple
 
 # Save the map
 library(htmlwidgets)
-saveWidget(widget = baltimore_map1, file = "points_shootings_homicides.html")
+saveWidget(widget = baltimore_map_simple, file = "points_shootings_homicides.html")
 
 ############ Create a choropleth map of Baltimore 2018 homicides and shootings ###########
 
@@ -76,7 +78,8 @@ popup_text <- paste0("Event Rate per 100k Residents: ", as.character(neighborhoo
 
 # Mapping it
 baltimore_map <- leaflet() %>%
-  addProviderTiles("Wikimedia") %>% # Full list of tiles you can use: http://leaflet-extras.github.io/leaflet-providers/preview/ 
+  addProviderTiles(providers$Stamen.Toner) %>%
+  # Full list of tiles you can use: http://leaflet-extras.github.io/leaflet-providers/preview/ 
   setView(-76.6425073,39.2928739, zoom = 12) %>% 
   addPolygons(data = neighborhood_merged , 
               fillColor = ~color_palette(neighborhood_merged$rate), 
